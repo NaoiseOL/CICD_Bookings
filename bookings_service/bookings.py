@@ -69,6 +69,6 @@ def delete_booking(booking_id: int, db: Session = Depends(get_db)) -> Response:
     booking = db.get(BookingsDB, booking_id)
     if not booking:
         raise HTTPException(status_code=404, detail="booking not found")
-    db.delete_booking(booking)
+    db.delete(booking)
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
