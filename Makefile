@@ -1,4 +1,4 @@
-APP = app.main:app
+APP = bookings_service.bookings:app
 PID_FILE = .uvicorn.pid
 
 install:
