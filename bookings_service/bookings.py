@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException, status, Response
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
-from database import engine, SessionLocal
+from .database import engine, SessionLocal
 from .models import Base, BookingsDB
 from .schemas import BookingCreate, BookingRead
 
