@@ -23,3 +23,9 @@ class BookingRead(BaseModel):
     end_Date: end_DateStr
 
     model_config = ConfigDict(from_attributes=True)
+
+class BookingUpdate(BaseModel):
+    first_name: Optional[NameStr] = None
+    surname: Optional[SurnameStr] = None
+    start_Date: Optional[start_DateStr] = None
+    end_Date: Optional[end_Date] = None

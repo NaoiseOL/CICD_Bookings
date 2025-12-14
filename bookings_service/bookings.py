@@ -1,10 +1,10 @@
 from fastapi import FastAPI, Depends, HTTPException, status, Response
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from .database import engine, SessionLocal
 from .models import Base, BookingsDB
-from .schemas import BookingCreate, BookingRead
+from .schemas import BookingCreate, BookingRead, BookingUpdate
 
 app = FastAPI()
 Base.metadata.drop_all(bind=engine)
@@ -72,3 +72,20 @@ def delete_booking(booking_id: int, db: Session = Depends(get_db)) -> Response:
     db.delete(booking)
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+@app.patch("/api/bookings/{booking_id}", response_model=BookingRead)
+def patch_booking(booking_id: int, payload: BookingUpdate, db: Session = Depends(get_db)):
+    booking = db.get(BookingsDB, booking_id)
+    if not booking:
+        raise HTTPException(status_code=404, detail="Booking Not Found")
+
+    for field, value in payload.model_dump(exclude_unset=True).items():
+        setattr(booking, field, value)
+
+    try:
+        db.commit()
+        db.refresh(booking)
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(status_code=409, detail="Booking Patch Failed")
+    return booking
