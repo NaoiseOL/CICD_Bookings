@@ -7,7 +7,6 @@ from .models import Base, BookingsDB
 from .schemas import BookingCreate, BookingRead, BookingUpdate
 
 app = FastAPI()
-Base.metadata.drop_all(bind=engine)
 Base.metadata.create_all(bind=engine)
 
 def get_db():
