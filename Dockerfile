@@ -19,4 +19,5 @@ RUN mkdir -p /app/data && chown -R appuser:appuser /app
 
 USER appuser
 EXPOSE 8000
+
 CMD ["uvicorn", "bookings_service.bookings:app", "--host=0.0.0.0", "--port=8000"]
