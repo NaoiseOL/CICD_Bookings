@@ -10,6 +10,7 @@ end_DateStr = Annotated[str, StringConstraints(min_length=2, max_length=50)]
 AgeInt = Annotated[int, Ge(0), Le(150)]
 
 class BookingCreate(BaseModel):
+    user_id: int
     first_name: NameStr
     surname: SurnameStr
     start_Date: start_DateStr
@@ -25,6 +26,7 @@ class BookingRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 class BookingUpdate(BaseModel):
+    user_id: Optional[int] = None
     first_name: Optional[NameStr] = None
     surname: Optional[SurnameStr] = None
     start_Date: Optional[start_DateStr] = None
