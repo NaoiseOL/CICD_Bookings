@@ -9,9 +9,21 @@ from .rabbit import publish_event
 import asyncio
 import os
 import json
+import httpx
 
 app = FastAPI()
 Base.metadata.create_all(bind=engine)
+
+USERS_SERVICE_URL = os.getenv("USERS_SERVICE_URL", "http://users:8000")
+
+async def verify_user(user_id: int):
+    async with httpx.AsyncClient() as client:
+        resp = await client.get(f"{USERS_SERVICE_URL}/api/users/{user_id}")
+
+        if resp.status_code == 404:
+            raise HTTPException(status_code=400, detail=f"User with id {user_id} does not exist")
+
+        resp.raise_for_status()
 
 def get_db():
     db = SessionLocal()
@@ -38,6 +50,8 @@ def get_booking(booking_id: int, db: Session = Depends(get_db)):
 
 @app.post("/api/bookings", response_model=BookingRead, status_code=status.HTTP_201_CREATED)
 async def add_booking(payload: BookingCreate, db: Session = Depends(get_db)):
+    await verify_user(payload.user_id)
+    
     booking = BookingsDB(**payload.dict(exclude_unset=True))
     db.add(booking)
     try:
